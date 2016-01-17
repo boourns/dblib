@@ -1,9 +1,7 @@
 package dbutil
 
-import "database/sql"
-
 // ListTables returns a list of
-func ListTables(db *sql.DB) ([]string, error) {
+func ListTables(db DBLike) ([]string, error) {
 	rows, err := db.Query(".tables")
 	result := []string{}
 
