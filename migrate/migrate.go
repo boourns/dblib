@@ -2,10 +2,28 @@ package migrate
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
 var db *sql.DB
+
+func tableExists(name string) bool {
+	var table, create string
+	// try in mysql syntax
+	err := db.QueryRow(`SHOW CREATE TABLE ?`, name).Scan(&table, &create)
+	if err == nil {
+		return true
+	}
+
+	// sqlite3 syntax
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`, name).Scan(&table)
+	if table == "migrations" && err == nil {
+		return true
+	}
+
+	return false
+}
 
 func Run(version int, name string, migration func() error) bool {
 	if migrationCompleted(version) == false {
@@ -19,16 +37,13 @@ func Run(version int, name string, migration func() error) bool {
 func Init(d *sql.DB) error {
 	db = d
 
-	var table, create string
-	err := db.QueryRow(`SHOW CREATE TABLE migrations`).Scan(&table, &create)
-	if err != nil {
+	if !tableExists("migrations") {
 		sql := `CREATE TABLE migrations ( version INTEGER )`
 		execute(sql)
 	}
 
-	err = db.QueryRow(`SHOW CREATE TABLE migrations`).Scan(&table, &create)
-	if err != nil {
-		return err
+	if !tableExists("migrations") {
+		return errors.New("could not create migrations table")
 	}
 	return nil
 }
