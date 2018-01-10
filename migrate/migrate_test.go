@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+var testEngine dbutil.Engine
+
+func clearMigrations() {
+	testEngine.Exec()
+}
+
 func init() {
 	url := os.Getenv("TEST_DATABASE_URL")
 
@@ -13,9 +19,19 @@ func init() {
 		panic("TEST_DATABASE_URL is not set, giving up")
 	}
 
-	db = dbutil.Connect(url)
+	testEngine = dbutil.Connect(url)
 }
 
-func TestMigrateRunsMigrationOnce(t *testing.T) {
+func TestMigrateInit(t *testing.T) {
+	for i := 0; i < 2; i++ {
+		err := Init(testEngine)
+		if err != nil {
+			t.Errorf("Error running migrate.Init() %dth time: %v", i, err)
+		}
+	}
+}
+
+func TestMigrateRunsMigrationsOnce(t *testing.T) {
+	Init(testEngine)
 
 }

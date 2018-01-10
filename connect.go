@@ -2,6 +2,7 @@ package dbutil
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"net/url"
@@ -20,7 +21,24 @@ func Connect(dburl string) Engine {
 		log.Fatal(err)
 	}
 
-	db, err := sql.Open(parsed.Scheme, parsed.Path)
+	hostname := parsed.Hostname()
+	var path string
+	switch {
+	case hostname == "" && parsed.Path == "":
+		// remain in memory
+		path = ""
+	case hostname == "" && parsed.Path != "":
+		// like sqlite3:///path/to/file
+		path = parsed.Path
+	case hostname != "" && parsed.Path == "":
+		// like sqlite3://test.db
+		path = hostname
+	case hostname != "" && parsed.Path != "":
+		// like sqlite3://./test.db
+		path = fmt.Sprintf("%s/%s", hostname, parsed.Path)
+	}
+
+	db, err := sql.Open(parsed.Scheme, path)
 	if err != nil {
 		log.Fatal(err)
 	}

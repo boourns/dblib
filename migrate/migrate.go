@@ -1,12 +1,12 @@
 package migrate
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/boourns/dbutil"
 )
 
-var db *sql.DB
+var engine dbutil.Engine
 
 func Run(version int, name string, migration func() error) bool {
 	if migrationCompleted(version) == false {
@@ -17,22 +17,22 @@ func Run(version int, name string, migration func() error) bool {
 	return false
 }
 
-func Init(d *sql.DB) error {
-	db = d
+func Init(e dbutil.Engine) error {
+	engine = e
 
-	if !tableExists("migrations") {
+	if !e.TableExists("migrations") {
 		sql := `CREATE TABLE migrations ( version INTEGER )`
 		execute(sql)
 	}
 
-	if !tableExists("migrations") {
+	if !e.TableExists("migrations") {
 		return errors.New("could not create migrations table")
 	}
 	return nil
 }
 
 func migrationCompleted(version int) bool {
-	rows, err := db.Query("select 1 from migrations where version = ?", version)
+	rows, err := engine.Query("select 1 from migrations where version = ?", version)
 	if err != nil {
 		panic(fmt.Sprintf("Error checking migration: %s", err))
 	}
@@ -45,7 +45,7 @@ func insertMigration(version int) {
 }
 
 func execute(cmd string) {
-	stmt, err := db.Prepare(cmd)
+	stmt, err := engine.Prepare(cmd)
 	if err != nil {
 		panic(fmt.Sprintf("Error preparing %s:%s", cmd, err))
 	}

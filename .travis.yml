@@ -1,0 +1,13 @@
+language: go
+go: 
+ - 1.8
+ - 1.9
+ - release
+ - tip
+
+services:
+  - mysql
+
+script:
+ - ./script/test
+
