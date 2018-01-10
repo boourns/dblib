@@ -8,10 +8,13 @@ import (
 
 	_ "github.com/go-sql-driver/mysql" // mysql adapter
 	_ "github.com/mattn/go-sqlite3"    // sqlite3 adapter
+
+	"github.com/boourns/dbutil/engine/mysql"
+	"github.com/boourns/dbutil/engine/sqlite3"
 )
 
 // Connect accepts a database url like 'mysql://user:password@tcp(127.0.0.1:3306)/dbname' or 'sqlite3://data.db'
-func Connect(dburl string) *sql.DB {
+func Connect(dburl string) Engine {
 	parsed, err := url.Parse(dburl)
 	if err != nil {
 		log.Fatal(err)
@@ -27,5 +30,16 @@ func Connect(dburl string) *sql.DB {
 		log.Fatalf("Failed to connect to database: %s", err)
 	}
 
-	return db
+	engine := engineForScheme(parsed.Scheme, db)
+	return engine
+}
+
+func engineForScheme(scheme string, db *sql.DB) Engine {
+	switch scheme {
+	case "sqlite3":
+		return sqlite3.Engine{db}
+	case "mysql":
+		return mysql.Engine{db}
+	}
+	return nil
 }

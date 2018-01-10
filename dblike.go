@@ -1,6 +1,8 @@
 package dbutil
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type DBLike interface {
 	Query(string, ...interface{}) (*sql.Rows, error)

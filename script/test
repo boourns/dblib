@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+go test
+pushd migrate
+
+if [ -z ${TEST_MYSQL_DATABASE_URL+x} ]; then 
+	echo "TEST_MYSQL_DATABASE_URL not set, only testing sqlite3"
+else 
+	TEST_DATABASE_URL=$TEST_MYSQL_DATABASE_URL go test
+fi
+
+if [ -f test.db ]; then
+	rm test.db
+fi
+
+TEST_DATABASE_URL=sqlite3://test.db go test
+popd
