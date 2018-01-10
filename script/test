@@ -12,6 +12,11 @@ runTests() {
 if [ -z ${TEST_MYSQL_DATABASE_URL+x} ]; then 
 	echo "TEST_MYSQL_DATABASE_URL not set, only testing sqlite3"
 else 
+	if [ "$USE_DOCKER" = true ]; then
+	   set +e
+	   mysqlsh --sql --ssl-mode=REQUIRED -h 127.0.0.1 -P 32769 -u root --password=dbutil_test -e "DROP DATABASE dbutil_test; CREATE DATABASE dbutil_test;"
+	   set -e
+        fi
 	runTests $TEST_MYSQL_DATABASE_URL
 fi
 

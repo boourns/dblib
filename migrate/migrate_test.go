@@ -1,6 +1,8 @@
 package migrate
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/boourns/dbutil"
 	"os"
 	"testing"
@@ -9,7 +11,7 @@ import (
 var testEngine dbutil.Engine
 
 func clearMigrations() {
-	testEngine.Exec()
+	testEngine.Exec("DELETE from migrations;")
 }
 
 func init() {
@@ -33,5 +35,37 @@ func TestMigrateInit(t *testing.T) {
 
 func TestMigrateRunsMigrationsOnce(t *testing.T) {
 	Init(testEngine)
+	clearMigrations()
 
+	runCount := 0
+	Run(1, "createUsers", func(tx *sql.Tx) error {
+		runCount += 1
+		return nil
+	})
+	if runCount != 1 {
+		t.Errorf("Migration didn't run")
+	}
+	Run(1, "createUsers", func(tx *sql.Tx) error {
+		t.Errorf("Migration 1 ran twice")
+		return nil
+	})
+}
+
+func TestMigrationRollsBackIfErrorReturned(t *testing.T) {
+	Init(testEngine)
+	clearMigrations()
+
+	Run(1, "createUsers", func(tx *sql.Tx) error {
+		return errors.New("something bad happened")
+	})
+
+	runCount := 0
+	Run(1, "createUsers", func(tx *sql.Tx) error {
+		runCount += 1
+		return nil
+	})
+
+	if runCount != 1 {
+		t.Errorf("failed migration blocked second run")
+	}
 }

@@ -1,6 +1,8 @@
-sqlgen
+dbutil
 
-generate SQL from golang static types
+abstraction for differences between mysql and sqlite for various utilities
+
+also an implementation of a migration pattern for SQL powered applications
 
 ## Example
 ```go

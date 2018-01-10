@@ -17,8 +17,8 @@ func (e Engine) TableExists(name string) bool {
 	// sqlite3 syntax
 	var table, create string
 
-	err := e.QueryRow(`SHOW create table ?`, name).Scan(&table, &create)
-	if table == "migrations" && err == nil {
+	err := e.QueryRow(fmt.Sprintf("SHOW create table %s", name)).Scan(&table, &create)
+	if table == name && err == nil {
 		return true
 	}
 
@@ -27,7 +27,7 @@ func (e Engine) TableExists(name string) bool {
 
 // ListTables returns a list of tables
 func (e Engine) Tables() ([]string, error) {
-	rows, err := e.Query(".tables")
+	rows, err := e.Query("show tables")
 	result := []string{}
 
 	if err != nil {
@@ -59,7 +59,7 @@ func sqlType(f reflect.StructField) string {
 	}
 
 	if f.Name == "ID" || f.Name == "id" || f.Name == "Id" {
-		t = fmt.Sprintf("%s PRIMARY KEY", t)
+		t = fmt.Sprintf("%s PRIMARY KEY AUTO_INCREMENT", t)
 	}
 	return t
 }

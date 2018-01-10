@@ -58,7 +58,7 @@ func sqlType(f reflect.StructField) string {
 	}
 
 	if f.Name == "ID" || f.Name == "id" || f.Name == "Id" {
-		t = fmt.Sprintf("%s PRIMARY KEY", t)
+		t = fmt.Sprintf("%s PRIMARY KEY AUTOINCREMENT", t)
 	}
 	return t
 }

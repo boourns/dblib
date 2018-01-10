@@ -8,6 +8,9 @@ go:
 services:
   - mysql
 
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS dbutil_test;'
+
 script:
  - ./script/test
 

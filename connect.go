@@ -2,10 +2,8 @@ package dbutil
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
-
-	"net/url"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql" // mysql adapter
 	_ "github.com/mattn/go-sqlite3"    // sqlite3 adapter
@@ -16,39 +14,23 @@ import (
 
 // Connect accepts a database url like 'mysql://user:password@tcp(127.0.0.1:3306)/dbname' or 'sqlite3://data.db'
 func Connect(dburl string) Engine {
-	parsed, err := url.Parse(dburl)
-	if err != nil {
-		log.Fatal(err)
+	parts := strings.Split(dburl, "://")
+
+	if len(parts) != 2 {
+		log.Fatalf("Failed to connect: expected %s to be shaped like mysql://user:password@tcp(127.0.0.1:3306)/dbname)")
 	}
 
-	hostname := parsed.Hostname()
-	var path string
-	switch {
-	case hostname == "" && parsed.Path == "":
-		// remain in memory
-		path = ""
-	case hostname == "" && parsed.Path != "":
-		// like sqlite3:///path/to/file
-		path = parsed.Path
-	case hostname != "" && parsed.Path == "":
-		// like sqlite3://test.db
-		path = hostname
-	case hostname != "" && parsed.Path != "":
-		// like sqlite3://./test.db
-		path = fmt.Sprintf("%s/%s", hostname, parsed.Path)
-	}
-
-	db, err := sql.Open(parsed.Scheme, path)
+	db, err := sql.Open(parts[0], parts[1])
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %s", err)
+		log.Fatalf("Failed to connect to %s database %s: %s", parts[0], parts[1], err)
 	}
 
-	engine := engineForScheme(parsed.Scheme, db)
+	engine := engineForScheme(parts[0], db)
 	return engine
 }
 
