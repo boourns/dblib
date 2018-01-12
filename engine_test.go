@@ -1,6 +1,7 @@
 package dbutil
 
 import (
+	"log"
 	"os"
 	"testing"
 )
@@ -13,6 +14,8 @@ func init() {
 	if url == "" {
 		panic("TEST_DATABASE_URL is not set, giving up")
 	}
+
+	log.Println("Connnecting to ", url)
 
 	engine = Connect(url)
 }

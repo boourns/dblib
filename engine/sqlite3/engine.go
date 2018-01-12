@@ -17,7 +17,7 @@ func (e Engine) TableExists(name string) bool {
 	// sqlite3 syntax
 	var table string
 	err := e.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?;`, name).Scan(&table)
-	if table == "migrations" && err == nil {
+	if table == name && err == nil {
 		return true
 	}
 
