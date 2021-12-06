@@ -2,7 +2,7 @@ package migrations
 
 import (
 	"database/sql"
-	"github.com/boourns/dbutil"
+	"github.com/boourns/dblib"
 	"time"
 )
 
@@ -12,7 +12,7 @@ type Migrations struct {
 	CreatedAt time.Time `sqlType:"DATETIME"`
 }
 
-func DefineMigration(db *sql.DB, id int64, migration func(dbutil.DBLike) error) error {
+func DefineMigration(db *sql.DB, id int64, migration func(dblib.DBLike) error) error {
 	existing, err := SelectMigrations(db, "WHERE MigrationID = ?", id)
 	if err != nil {
 		// Old documents are missing a MigrationID column, so try to add it seamlessly :( :)

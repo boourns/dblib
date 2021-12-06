@@ -3,12 +3,12 @@ package migrations
 import (
 	"database/sql"
 	"errors"
-	"github.com/boourns/dbutil"
+	"github.com/boourns/dblib"
 	"os"
 	"testing"
 )
 
-var testEngine dbutil.Engine
+var testEngine dblib.Engine
 
 func clearMigrations() {
 	testEngine.Exec("DELETE from migrations;")
@@ -21,7 +21,7 @@ func init() {
 		panic("TEST_DATABASE_URL is not set, giving up")
 	}
 
-	testEngine = dbutil.Connect(url)
+	testEngine = dblib.Connect(url)
 }
 
 func TestMigrateInit(t *testing.T) {

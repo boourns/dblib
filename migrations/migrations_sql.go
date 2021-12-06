@@ -5,7 +5,7 @@ package migrations
 import (
 	"database/sql"
 	"fmt"
-	"github.com/boourns/dbutil"
+	"github.com/boourns/dblib"
 )
 
 func sqlFieldsForMigrations() string {
@@ -22,7 +22,7 @@ func loadMigrations(rows *sql.Rows) (*Migrations, error) {
 	return &ret, nil
 }
 
-func SelectMigrations(tx dbutil.DBLike, cond string, condFields ...interface{}) ([]*Migrations, error) {
+func SelectMigrations(tx dblib.DBLike, cond string, condFields ...interface{}) ([]*Migrations, error) {
   ret := []*Migrations{}
   sql := fmt.Sprintf("SELECT %s from Migrations %s", sqlFieldsForMigrations(), cond)
 	rows, err := tx.Query(sql, condFields...)
@@ -40,7 +40,7 @@ func SelectMigrations(tx dbutil.DBLike, cond string, condFields ...interface{}) 
   return ret, nil
 }
 
-func (s *Migrations) Update(tx dbutil.DBLike) error {
+func (s *Migrations) Update(tx dblib.DBLike) error {
 		stmt, err := tx.Prepare(fmt.Sprintf("UPDATE Migrations SET ID=?,MigrationID=?,CreatedAt=? WHERE Migrations.ID = ?", )) // ADD FIELD HERE
 
 		if err != nil {
@@ -58,7 +58,7 @@ func (s *Migrations) Update(tx dbutil.DBLike) error {
     return nil
 }
 
-func (s *Migrations) Insert(tx dbutil.DBLike) error {
+func (s *Migrations) Insert(tx dblib.DBLike) error {
 		stmt, err := tx.Prepare("INSERT INTO Migrations(MigrationID,CreatedAt) VALUES(?,?)") // ADD FIELD HERE
 		if err != nil {
 			return err
@@ -76,7 +76,7 @@ func (s *Migrations) Insert(tx dbutil.DBLike) error {
 	  return nil
 }
 
-func (s *Migrations) Delete(tx dbutil.DBLike) error {
+func (s *Migrations) Delete(tx dblib.DBLike) error {
 		stmt, err := tx.Prepare("DELETE FROM Migrations WHERE ID = ?")
 		if err != nil {
 			return err
@@ -90,7 +90,7 @@ func (s *Migrations) Delete(tx dbutil.DBLike) error {
 	  return nil
 }
 
-func CreateMigrationsTable(tx dbutil.DBLike) error {
+func CreateMigrationsTable(tx dblib.DBLike) error {
 		stmt, err := tx.Prepare(`
 
 

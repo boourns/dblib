@@ -1,3 +1,3 @@
-module github.com/boourns/dbutil
+module github.com/boourns/dblib
 
 go 1.17
