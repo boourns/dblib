@@ -1,24 +1,12 @@
 dbutil
 
-abstraction for differences between mysql and sqlite for various utilities
+Utilities for interacting with SQL databases in Golang
 
-also an implementation of a migration pattern for SQL powered applications
+## Features
 
-## Example
-```go
-package main
+Interface to unify \*sql.TX and \*sql.DB for functions that should accept either.
 
-import (
-    "fmt"
-    "github.com/boourns/sqlgen"
-)
+Migrations engine
 
-type User struct {
-    ID   int
-    Name string
-}
+Transaction wrapper
 
-func main() {
-    fmt.Printf("Create Table: %s", sqlgen.CreateTable(User{}))      
-}
-```
