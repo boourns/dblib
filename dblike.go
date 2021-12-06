@@ -1,4 +1,4 @@
-package dbutil
+package dblib
 
 import (
 	"database/sql"
