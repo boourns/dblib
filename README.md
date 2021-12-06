@@ -8,5 +8,5 @@ Utilities for interacting with SQL databases in Golang
 
 `github.com/boourns/dblib/migrations` - Migrations engine
 
-`dblib.Transaction` - Transaction wrapper
+`dblib.Transact` - Transaction wrapper
 
