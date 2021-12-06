@@ -1,12 +1,12 @@
-dbutil
+dblib
 
 Utilities for interacting with SQL databases in Golang
 
 ## Features
 
-Interface to unify \*sql.TX and \*sql.DB for functions that should accept either.
+`dblib.DBLike` - Interface to unify \*sql.TX and \*sql.DB for functions that should accept either.
 
-Migrations engine
+`github.com/boourns/dblib/migrations` - Migrations engine
 
-Transaction wrapper
+`dblib.Transaction` - Transaction wrapper
 
