@@ -6,7 +6,8 @@ Utilities for interacting with SQL databases in Golang
 
 `dblib.DBLike` - Interface to unify \*sql.TX and \*sql.DB for functions that should accept either.
 
-`github.com/boourns/dblib/migrations` - Migrations engine
-
 `dblib.Transact` - Transaction wrapper
 
+`github.com/boourns/dblib/migrations` - Migrations engine
+
+`github.com/boourns/dblib/query` - Query builder
