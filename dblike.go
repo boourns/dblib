@@ -9,4 +9,5 @@ type DBLike interface {
 	QueryRow(string, ...interface{}) *sql.Row
 	Prepare(string) (*sql.Stmt, error)
 	Exec(string, ...interface{}) (sql.Result, error)
+	Begin() (TransactionLike, error)
 }
