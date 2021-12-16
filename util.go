@@ -1,9 +1,5 @@
 package dblib
 
-import (
-	"database/sql"
-)
-
 func Run(tx DBLike, command string) error {
 	stmt, err := tx.Prepare(command)
 	if err != nil {
@@ -17,7 +13,7 @@ func Run(tx DBLike, command string) error {
 	return nil
 }
 
-func Transact(db *sql.DB, txFunc func(*sql.Tx) error) (err error) {
+func Transact(db DBLike, txFunc func(TransactionLike) error) (err error) {
 	tx, err := db.Begin()
 	if err != nil {
 		return
