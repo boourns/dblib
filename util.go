@@ -4,7 +4,7 @@ import (
 	"database/sql"
 )
 
-func Run(tx DBLike, command string) error {
+func Run(tx Queryable, command string) error {
 	stmt, err := tx.Prepare(command)
 	if err != nil {
 		return err
