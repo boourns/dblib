@@ -16,12 +16,18 @@ type Query struct {
 	conditions Fragment
 	joins []Fragment
 
+	groupField string
 	sortField string
 	limitCount int
 }
 
 func Builder() *Query {
 	return &Query{}
+}
+
+func (q *Query) Group(group string) *Query {
+	q.groupField = group
+	return q
 }
 
 func (q *Query) Order(field string) *Query {
@@ -107,6 +113,10 @@ func (q *Query) Render() (sql string, fields []interface{}) {
 		for _, v := range condFields {
 			fields = append(fields, v)
 		}
+	}
+
+	if q.groupField != "" {
+		sql += fmt.Sprintf(" GROUP BY %s", q.groupField)
 	}
 
 	if q.sortField != "" {
